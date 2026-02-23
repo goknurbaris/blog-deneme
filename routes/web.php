@@ -1,21 +1,36 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PostController;
 
-// 1. Ana Sayfa (Yazı Listesi)
+// Laravel'in otomatik eklediği üyelik rotaları (Login, Register, Logout)
+Auth::routes();
+
+// ==========================================
+// 🟢 HERKESİN GÖREBİLECEĞİ SAYFALAR
+// ==========================================
 Route::get('/', [PostController::class, 'index'])->name('blog.index');
+Route::get('/blog/detay/{slug}', [PostController::class, 'show'])->name('blog.show');
+Auth::routes();
 
-// 2. Yeni Yazı Ekleme Sayfası (Form)
-Route::get('/blog/yaz', [PostController::class, 'create'])->name('blog.create');
+// Başarılı giriş/kayıt sonrası /home arayanları ana sayfaya yönlendir
+Route::redirect('/home', '/');
 
-// 3. Formdan Gelen Veriyi Kaydetme
-Route::post('/blog/yaz', [PostController::class, 'store'])->name('blog.store');
-// Silme İşlemi (Post ID'sine göre)
-Route::delete('/blog/{id}', [PostController::class, 'destroy'])->name('blog.destroy');
+// ==========================================
+// 🔴 SADECE GİRİŞ YAPMIŞ ÜYELERİN GİREBİLECEĞİ SAYFALAR
+// ==========================================
+Route::middleware(['auth'])->group(function () {
 
-// Düzenleme Sayfası (Formu gösterir)
-Route::get('/blog/{id}/duzenle', [PostController::class, 'edit'])->name('blog.edit');
+    // Yeni Yazı Ekleme
+    Route::get('/blog/yaz', [PostController::class, 'create'])->name('blog.create');
+    Route::post('/blog/yaz', [PostController::class, 'store'])->name('blog.store');
 
-// Güncelleme İşlemi (Veritabanını günceller)
-Route::put('/blog/{id}', [PostController::class, 'update'])->name('blog.update');
+    // Düzenleme İşlemleri
+    Route::get('/blog/{id}/duzenle', [PostController::class, 'edit'])->name('blog.edit');
+    Route::put('/blog/{id}', [PostController::class, 'update'])->name('blog.update');
+
+    // Silme İşlemi
+    Route::delete('/blog/{id}', [PostController::class, 'destroy'])->name('blog.destroy');
+
+});
