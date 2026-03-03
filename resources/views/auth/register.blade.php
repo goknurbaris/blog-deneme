@@ -1,77 +1,48 @@
-@extends('layouts.app')
+<x-guest-layout>
+    <h2 class="text-2xl font-extrabold text-slate-900 mb-6 text-center">Aramıza Katıl 🚀</h2>
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+    <form method="POST" action="{{ route('register') }}" class="space-y-4">
+        @csrf
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
-                        @csrf
-
-                        <div class="row mb-3">
-                            <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
-
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Register') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 ml-1">Ad Soyad</label>
+            <input type="text" name="name" value="{{ old('name') }}" required autofocus
+                class="w-full px-4 py-3 rounded-2xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none"
+                placeholder="Adınız">
+            <x-input-error :messages="$errors->get('name')" class="mt-1" />
         </div>
-    </div>
-</div>
-@endsection
+
+        <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 ml-1">E-Posta</label>
+            <input type="email" name="email" value="{{ old('email') }}" required
+                class="w-full px-4 py-3 rounded-2xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none"
+                placeholder="mail@adresiniz.com">
+            <x-input-error :messages="$errors->get('email')" class="mt-1" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 ml-1">Şifre</label>
+                <input type="password" name="password" required
+                    class="w-full px-4 py-3 rounded-2xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none"
+                    placeholder="••••••">
+            </div>
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-widest text-slate-500 mb-1 ml-1">Tekrar</label>
+                <input type="password" name="password_confirmation" required
+                    class="w-full px-4 py-3 rounded-2xl border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none"
+                    placeholder="••••••">
+            </div>
+            <x-input-error :messages="$errors->get('password')" class="col-span-2 mt-1" />
+        </div>
+
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-slate-900 text-white font-bold py-4 rounded-2xl transition-all duration-300 transform active:scale-[0.98] shadow-lg shadow-indigo-100 mt-4">
+            Hesap Oluştur
+        </button>
+
+        <p class="text-center text-slate-500 text-sm mt-4">
+            Zaten üye misin?
+            <a href="{{ route('login') }}" class="font-bold text-indigo-600 hover:underline">Giriş Yap</a>
+        </p>
+    </form>
+</x-guest-layout>

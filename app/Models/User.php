@@ -45,4 +45,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Kullanıcının sahip olduğu yazılar. (İLİŞKİ BURADA OLMALI)
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 }

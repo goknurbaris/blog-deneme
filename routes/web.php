@@ -1,36 +1,39 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 
-// Laravel'in otomatik eklediği üyelik rotaları (Login, Register, Logout)
-Auth::routes();
-
-// ==========================================
-// 🟢 HERKESİN GÖREBİLECEĞİ SAYFALAR
-// ==========================================
+// 1. ANA SAYFA
 Route::get('/', [PostController::class, 'index'])->name('blog.index');
-Route::get('/blog/detay/{slug}', [PostController::class, 'show'])->name('blog.show');
-Auth::routes();
 
-// Başarılı giriş/kayıt sonrası /home arayanları ana sayfaya yönlendir
-Route::redirect('/home', '/');
-
-// ==========================================
-// 🔴 SADECE GİRİŞ YAPMIŞ ÜYELERİN GİREBİLECEĞİ SAYFALAR
-// ==========================================
+// 2. GİRİŞ YAPANLAR İÇİN ÖZEL İŞLEMLER
 Route::middleware(['auth'])->group(function () {
 
-    // Yeni Yazı Ekleme
+    // Dashboard (Panel)
+    Route::get('/dashboard', [PostController::class, 'dashboard'])->name('dashboard');
+
+    // Yazı Ekleme
     Route::get('/blog/yaz', [PostController::class, 'create'])->name('blog.create');
     Route::post('/blog/yaz', [PostController::class, 'store'])->name('blog.store');
 
-    // Düzenleme İşlemleri
-    Route::get('/blog/{id}/duzenle', [PostController::class, 'edit'])->name('blog.edit');
+    // Yazı Düzenleme ve Silme
+    Route::get('/blog/{id}/edit', [PostController::class, 'edit'])->name('blog.edit');
     Route::put('/blog/{id}', [PostController::class, 'update'])->name('blog.update');
-
-    // Silme İşlemi
     Route::delete('/blog/{id}', [PostController::class, 'destroy'])->name('blog.destroy');
 
+    // Etkileşimler (Beğeni ve Yorum)
+    Route::post('/blog/{post}/like', [PostController::class, 'like'])->name('blog.like');
+    Route::post('/blog/{id}/comment', [PostController::class, 'commentStore'])->name('comment.store');
+
+    // 🚨 İŞTE SİLİNEN VE HATAYA SEBEP OLAN YER BURASI: Profil Rotaları 🚨
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// 3. YAZI DETAY SAYFASI (En altta kalmalı)
+Route::get('/blog/{slug}', [PostController::class, 'show'])->name('blog.show');
+
+// Auth (Giriş/Çıkış) Rotaları
+require __DIR__.'/auth.php';
