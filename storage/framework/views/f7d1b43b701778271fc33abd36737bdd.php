@@ -2,6 +2,11 @@
 
 <?php $__env->startSection('content'); ?>
 <div class="max-w-6xl mx-auto">
+
+    <a href="<?php echo e(route('blog.index')); ?>" class="inline-flex items-center gap-2 text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors mb-6 group">
+        <span class="text-xl group-hover:-translate-x-1 transition-transform">←</span> Ana Sayfaya Dön
+    </a>
+
     <div class="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-4xl font-black text-slate-900 dark:text-white tracking-tighter italic transition-colors">Panelim 🚀</h1>
@@ -54,6 +59,11 @@
                     </a>
                     <div class="flex flex-wrap items-center text-xs text-slate-500 dark:text-slate-400 font-medium gap-3 transition-colors">
                         <span class="bg-slate-100 dark:bg-slate-900 px-2 py-1 rounded-md"><?php echo e($yazi->created_at->format('d.m.Y')); ?></span>
+
+                        <span class="text-indigo-500 dark:text-indigo-400 font-bold flex items-center gap-1">
+                            ⏱️ <?php echo e($yazi->okuma_suresi); ?> dk okuma
+                        </span>
+
                         <span>❤️ <?php echo e($yazi->likes()->count()); ?> Beğeni</span>
                         <span>💬 <?php echo e($yazi->comments()->count()); ?> Yorum</span>
                     </div>
