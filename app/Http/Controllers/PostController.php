@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
+use App\Models\Category;
 use App\Models\Like;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -34,17 +35,27 @@ class PostController extends Controller
     // 4. Yazıyı Kaydet (Benzersiz URL Korumalı)
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+        ]);
+
         $imagePath = $request->hasFile('image') ? $request->file('image')->store('posts', 'public') : null;
-        $slug = Str::slug($request->title);
+        $slug = Str::slug($validated['title']);
         $orijinalSlug = $slug; $sayac = 1;
         while (Post::where('slug', $slug)->exists()) { $slug = $orijinalSlug . '-' . $sayac; $sayac++; }
+        $defaultCategory = Category::firstOrCreate(
+            ['slug' => 'genel'],
+            ['name' => 'Genel']
+        );
 
         Auth::user()->posts()->create([
-            'title' => $request->title,
+            'title' => $validated['title'],
             'slug' => $slug,
-            'content' => $request->content,
+            'content' => $validated['content'],
             'image' => $imagePath,
-            'category_id' => 1
+            'category_id' => $defaultCategory->id,
         ]);
         return redirect()->route('blog.index')->with('basari', 'Yazı paylaşıldı! ✨');
     }
@@ -70,9 +81,15 @@ class PostController extends Controller
    // 7. Yazıyı Güncelle (Doğru Hali)
     public function update(Request $request, $id)
     {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'content' => ['required', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+        ]);
+
         $post = Post::where('user_id', Auth::id())->findOrFail($id);
-        $post->title = $request->title;
-        $post->content = $request->content;
+        $post->title = $validated['title'];
+        $post->content = $validated['content'];
 
         if ($request->hasFile('image')) {
             $post->image = $request->file('image')->store('posts', 'public');
@@ -103,11 +120,14 @@ class PostController extends Controller
     // 10. Yorum Kaydet
     public function commentStore(Request $request, $id)
     {
+        $validated = $request->validate([
+            'content' => ['required', 'string', 'max:2000'],
+        ]);
+
         $post = Post::findOrFail($id);
         $post->comments()->create([
-            'user_id' => Auth::id(),
-            'user_name' => $request->user_name,
-            'content' => $request->content
+            'user_name' => Auth::user()->name,
+            'content' => $validated['content'],
         ]);
         return back()->with('basari', 'Yorum eklendi! 😊');
     }

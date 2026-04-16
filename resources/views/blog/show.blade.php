@@ -84,10 +84,6 @@
                 <form action="{{ route('comment.store', $post->id) }}" method="POST" class="space-y-4">
                     @csrf
                     <div>
-                        <input type="text" name="user_name" placeholder="Adınız Soyadınız" required
-                               class="w-full px-4 py-3 bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition shadow-sm">
-                    </div>
-                    <div>
                         <textarea name="content" rows="4" placeholder="Düşüncelerinizi paylaşın..." required
                                   class="w-full px-4 py-3 bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition shadow-sm"></textarea>
                     </div>
